@@ -47,31 +47,40 @@ features = ue1_df[
 # Target outputs
 target = ue1_df[TARGET_COLUMN]
 
-# chronological 80/20 split
-split_index = int(len(ue1_df) * 0.8)
+# Chronological 70/15/15 split
+n = len(ue1_df)
+train_end = int(n * 0.70)
+val_end = int(n * 0.85)
+X_train = features.iloc[:train_end].copy()
+X_val = features.iloc[train_end:val_end].copy()
+X_test = features.iloc[val_end:].copy()
 
-X_train = features.iloc[:split_index].copy()
-X_test = features.iloc[split_index:].copy()
-
-y_train = target.iloc[:split_index]
-y_test = target.iloc[split_index:]
+y_train = target.iloc[:train_end]
+y_val = target.iloc[train_end:val_end]
+y_test = target.iloc[val_end:]
 
 print("\nUE1 Dataset Shape:", ue1_df.shape)
 print("Training features:", X_train.shape)
+print("Validation features:", X_val.shape)
 print("Testing features:", X_test.shape)
 print("Training target:", y_train.shape)
+print("Validation target:", y_val.shape)
 print("Testing target:", y_test.shape)
 
 # """
 # Normalize FEATURES ONLY
 # """
-
 scaler = MinMaxScaler()
-
 X_train = pd.DataFrame(
     scaler.fit_transform(X_train),
     columns=X_train.columns,
     index=X_train.index,
+)
+
+X_val = pd.DataFrame(
+    scaler.transform(X_val),
+    columns=X_val.columns,
+    index=X_val.index,
 )
 
 X_test = pd.DataFrame(
@@ -87,12 +96,14 @@ print("\nFeatures normalized using MinMaxScaler.")
 # """
 
 X_train.to_csv("data/X_train_ue1.csv", index=False)
+X_val.to_csv("data/X_val_ue1.csv", index=False)
 X_test.to_csv("data/X_test_ue1.csv", index=False)
 
 y_train.to_csv("data/y_train_ue1.csv", index=False)
+y_val.to_csv("data/y_val_ue1.csv", index=False)
 y_test.to_csv("data/y_test_ue1.csv", index=False)
 
 print("\nProcessed dataset saved successfully.")
 print("Lag features: lag1, lag2, lag3")
 print("Normalization: MinMaxScaler")
-print("Train/Test Split: 80/20")
+print("Train/Validation/Test Split: 70/15/15")

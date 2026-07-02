@@ -6,9 +6,7 @@ from sklearn.metrics import mean_absolute_error
 from sklearn.metrics import mean_squared_error
 from sklearn.metrics import r2_score
 
-# -----------------------------
 # Load training/testing data
-# -----------------------------
 
 X_train = pd.read_csv("data/X_train_ue1.csv")
 X_test = pd.read_csv("data/X_test_ue1.csv")
@@ -16,9 +14,7 @@ X_test = pd.read_csv("data/X_test_ue1.csv")
 y_train = pd.read_csv("data/y_train_ue1.csv").squeeze()
 y_test = pd.read_csv("data/y_test_ue1.csv").squeeze()
 
-# -----------------------------
-# Use only CQI and Jitter
-# -----------------------------
+# Use selected features
 
 X_train = X_train[
     [
@@ -40,30 +36,22 @@ X_test = X_test[
     ]
 ]
 
-# -----------------------------
-# Create Random Forest
-# -----------------------------
+# Create Random Forest model
 
 model = RandomForestRegressor(
     n_estimators=100,
     random_state=42
 )
 
-# -----------------------------
-# Train
-# -----------------------------
+# Train model
 
 model.fit(X_train, y_train)
 
-# -----------------------------
-# Predict
-# -----------------------------
+# Predict on test data
 
 predictions = model.predict(X_test)
 
-# -----------------------------
-# Evaluate
-# -----------------------------
+# Evaluate performance
 
 mae = mean_absolute_error(y_test, predictions)
 mse = mean_squared_error(y_test, predictions)
@@ -76,10 +64,7 @@ print(f"MSE  : {mse:.2f}")
 print(f"RMSE : {rmse:.2f}")
 print(f"R²   : {r2:.4f}")
 
-# -----------------------------
 # Show first 10 predictions
-# -----------------------------
-
 results = pd.DataFrame({
     "Actual Throughput": y_test,
     "Predicted Throughput": predictions
@@ -88,11 +73,7 @@ results = pd.DataFrame({
 print("\nFirst 10 Predictions")
 print(results.head(10))
 
-
-# -----------------------------
-# Feature Importance
-# -----------------------------
-
+# Feature importance
 importance = pd.DataFrame({
     "Feature": X_train.columns,
     "Importance": model.feature_importances_
@@ -106,11 +87,8 @@ importance = importance.sort_values(
 print("\nFeature Importance")
 print(importance)
 
-# -----------------------------
-# Plot Feature Importance
-# -----------------------------
-
-plt.figure(figsize=(8,5))
+# Plot feature importance
+plt.figure(figsize=(8, 5))
 
 plt.bar(
     importance["Feature"],
@@ -132,11 +110,7 @@ plt.show()
 print("\nFeature importance plot saved to:")
 print("plots/random_forest_feature_importance.png")
 
-
-# -----------------------------
-# Actual vs Predicted Plot
-# -----------------------------
-
+# Actual vs Predicted plot
 plt.figure(figsize=(8, 6))
 
 plt.scatter(
@@ -159,6 +133,7 @@ plt.grid(True)
 plt.tight_layout()
 
 plt.savefig("plots/random_forest_actual_vs_predicted.png", dpi=300)
+
 plt.show()
 
 print("\nActual vs predicted plot saved to:")

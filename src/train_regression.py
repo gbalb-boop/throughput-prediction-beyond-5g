@@ -4,8 +4,9 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error
 from sklearn.metrics import mean_squared_error
 from sklearn.metrics import r2_score
+
 # Think about normalizing the variables and redoing it 
-# -----------------------------
+
 # Load training and testing data
 
 X_train = pd.read_csv("data/X_train_ue1.csv")
@@ -14,7 +15,7 @@ X_test = pd.read_csv("data/X_test_ue1.csv")
 y_train = pd.read_csv("data/y_train_ue1.csv")
 y_test = pd.read_csv("data/y_test_ue1.csv")
 
-# ---------------------------------------
+
 # Use only Jitter and CQI as input features
 
 X_train = X_train[
@@ -41,7 +42,7 @@ X_test = X_test[
 y_train = y_train.squeeze()
 y_test = y_test.squeeze()
 
-# -----------------------------
+
 # Create Linear Regression model
 
 model = LinearRegression()
@@ -52,7 +53,7 @@ model.fit(X_train, y_train)
 # Make predictions
 predictions = model.predict(X_test)
 
-# -----------------------------
+
 # Evaluate model performance
 
 mae = mean_absolute_error(y_test, predictions)
@@ -66,7 +67,7 @@ print(f"MSE  : {mse:.2f}")
 print(f"RMSE : {rmse:.2f}")
 print(f"R²   : {r2:.4f}")
 
-# -----------------------------
+
 # Show first 10 predictions
 
 results = pd.DataFrame({

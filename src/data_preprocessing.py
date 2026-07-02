@@ -15,47 +15,17 @@ print("Dataset loaded successfully")
 print("File:", file_path)
 print("Shape:", df.shape)
 
-# print("\nColumns:")
-# print(df.columns.tolist())
-
-# print("\nFirst 5 rows:")
-# print(df.head())
-
-# print("\nDataset info:")
-# df.info()
-
-# print("\nMissing values:")
-# print(df.isnull().sum())
-
-# print("\nSummary statistics:")
-# print(df.describe())
-
-# print("\nColumns with only one unique value:")
-# for col in df.columns:
-#     if df[col].nunique() == 1:
-#         print(col)
-
-# print("\nCorrelation matrix:")
-# corr = df.corr(numeric_only=True)
-# print(corr)
-
-# for col in df.columns:
-#     print(f"{col}: {df[col].nunique()} unique values")
-
-# print(df.iloc[:20])
-
-
-# --------------------------------------------------
+# """
 # UE1 throughput prediction setup
 # Creates lag features, performs train/test split,
 # normalizes the input features, and saves the data.
-# --------------------------------------------------
+# """
 
 TARGET_COLUMN = "UE1: web-rtc"
 
 ue1_df = df[["UE1: web-rtc", "UE1-Jitter", "UE1-CQI"]].copy()
 
-# Create lag features
+# Creates the lag features
 ue1_df["UE1_throughput_lag1"] = ue1_df[TARGET_COLUMN].shift(1)
 ue1_df["UE1_throughput_lag2"] = ue1_df[TARGET_COLUMN].shift(2)
 ue1_df["UE1_throughput_lag3"] = ue1_df[TARGET_COLUMN].shift(3)
@@ -63,7 +33,7 @@ ue1_df["UE1_throughput_lag3"] = ue1_df[TARGET_COLUMN].shift(3)
 # Remove rows that contain NaN from the lag features
 ue1_df = ue1_df.dropna()
 
-# Features (inputs)
+# features inputs
 features = ue1_df[
     [
         "UE1_throughput_lag1",
@@ -74,10 +44,10 @@ features = ue1_df[
     ]
 ]
 
-# Target (output)
+# Target outputs
 target = ue1_df[TARGET_COLUMN]
 
-# Chronological 80/20 split
+# chronological 80/20 split
 split_index = int(len(ue1_df) * 0.8)
 
 X_train = features.iloc[:split_index].copy()
@@ -92,9 +62,9 @@ print("Testing features:", X_test.shape)
 print("Training target:", y_train.shape)
 print("Testing target:", y_test.shape)
 
-# --------------------------------------------------
+# """
 # Normalize FEATURES ONLY
-# --------------------------------------------------
+# """
 
 scaler = MinMaxScaler()
 
@@ -112,9 +82,9 @@ X_test = pd.DataFrame(
 
 print("\nFeatures normalized using MinMaxScaler.")
 
-# --------------------------------------------------
+# """
 # Save processed data
-# --------------------------------------------------
+# """
 
 X_train.to_csv("data/X_train_ue1.csv", index=False)
 X_test.to_csv("data/X_test_ue1.csv", index=False)

@@ -1,5 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.ticker import StrMethodFormatter
+
 
 from pathlib import Path
 from sklearn.preprocessing import MinMaxScaler
@@ -112,43 +114,45 @@ print("Train/Validation/Test Split: 70/15/15")
 
 
 
-# Use Times New Roman for all text in the figure
-plt.rcParams["font.family"] = "Liberation Serif"
-plt.figure(figsize=(10, 5))
 
-plt.plot(
-    df.index[:1000],
-    df[TARGET_COLUMN].iloc[:1000],
-    linewidth=0.8
-)
+# # Use DejaVu throughout the figure
+# plt.rcParams["font.family"] = "DejaVu Serif"
 
-plt.title(
-    "UE1 Throughput Over Time",
-    fontsize=18,
-    fontweight="bold"
-)
+# fig, ax = plt.subplots(figsize=(6.8, 3.8))  # Fits well in a research paper
 
-plt.xlabel(
-    "Sample Index",
-    fontsize=14
-)
+# ax.plot(
+#     df.index[:1000],
+#     df[TARGET_COLUMN].iloc[:1000],
+#     color="tab:blue",
+#     linewidth=0.8
+# )
 
-plt.ylabel(
-    "Throughput (Bytes/s)",
-    fontsize=14
-)
+# # No title (the caption serves as the title in research papers)
 
-plt.xticks(fontsize=12)
-plt.yticks(fontsize=12)
+# ax.set_xlabel(
+#     "Sample Index",
+#     fontsize=11
+# )
 
-plt.grid(True, alpha=0.3)
+# ax.set_ylabel(
+#     "Throughput (Bytes/s)",
+#     fontsize=11
+# )
 
-plt.tight_layout()
+# ax.tick_params(axis='both', labelsize=10)
 
-plt.savefig(
-    "plots/01_ue1_throughput_over_time.png",
-    dpi=300,
-    bbox_inches="tight"
-)
+# # Add commas to y-axis labels
+# ax.yaxis.set_major_formatter(StrMethodFormatter('{x:,.0f}'))
 
-plt.show()
+# # Light grid
+# ax.grid(True, linestyle='--', linewidth=0.5, alpha=0.4)
+
+# plt.tight_layout()
+
+# plt.savefig(
+#     "plots/figure1_ue1_throughput.png",
+#     dpi=600,
+#     bbox_inches="tight"
+# )
+
+# plt.show()

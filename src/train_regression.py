@@ -1,5 +1,10 @@
 import pandas as pd
 
+#for the graph
+import matplotlib.pyplot as plt
+from matplotlib.ticker import StrMethodFormatter
+import os
+
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error
 from sklearn.metrics import mean_squared_error
@@ -77,3 +82,65 @@ print(results.head(10))
 # note to self even though its testing on the validation
 # set its not realy doing anything because it doesnt
 # have any real parameters to fine tune it  
+
+
+# Paper-style font
+plt.rcParams["font.family"] = "DejaVu Serif"
+
+# Number of test samples to display
+num_samples = 200
+
+# Create figure
+fig, ax = plt.subplots(figsize=(6.8, 3.8))
+
+# Actual throughput
+ax.plot(
+    results.index[:num_samples],
+    results["Actual Throughput"].iloc[:num_samples],
+    label="Actual Throughput",
+    linewidth=1.2
+)
+
+# Predicted throughput
+ax.plot(
+    results.index[:num_samples],
+    results["Predicted Throughput"].iloc[:num_samples],
+    label="Predicted Throughput",
+    linewidth=0.9,
+    linestyle="--"
+)
+
+# Axis labels
+ax.set_xlabel("Sample Index", fontsize=11)
+ax.set_ylabel("Throughput (Bytes/s)", fontsize=11)
+
+# Tick formatting
+ax.tick_params(axis="both", labelsize=10)
+ax.yaxis.set_major_formatter(StrMethodFormatter("{x:,.0f}"))
+
+# Grid
+ax.grid(
+    True,
+    linestyle="--",
+    linewidth=0.5,
+    alpha=0.25
+)
+
+# Legend
+ax.legend(
+    loc="upper center",
+    fontsize=9,
+    frameon=True
+)
+
+# Remove unnecessary whitespace
+plt.tight_layout()
+
+# Save figure
+plt.savefig(
+    "plots/linear_regression_actual_vs_predicted.png",
+    dpi=600,
+    bbox_inches="tight"
+)
+
+plt.close()

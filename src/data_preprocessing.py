@@ -1,4 +1,6 @@
 import pandas as pd
+import matplotlib.pyplot as plt
+
 from pathlib import Path
 from sklearn.preprocessing import MinMaxScaler
 
@@ -107,3 +109,46 @@ print("\nProcessed dataset saved successfully.")
 print("Lag features: lag1, lag2, lag3")
 print("Normalization: MinMaxScaler")
 print("Train/Validation/Test Split: 70/15/15")
+
+
+
+# Use Times New Roman for all text in the figure
+plt.rcParams["font.family"] = "Liberation Serif"
+plt.figure(figsize=(10, 5))
+
+plt.plot(
+    df.index[:1000],
+    df[TARGET_COLUMN].iloc[:1000],
+    linewidth=0.8
+)
+
+plt.title(
+    "UE1 Throughput Over Time",
+    fontsize=18,
+    fontweight="bold"
+)
+
+plt.xlabel(
+    "Sample Index",
+    fontsize=14
+)
+
+plt.ylabel(
+    "Throughput (Bytes/s)",
+    fontsize=14
+)
+
+plt.xticks(fontsize=12)
+plt.yticks(fontsize=12)
+
+plt.grid(True, alpha=0.3)
+
+plt.tight_layout()
+
+plt.savefig(
+    "plots/01_ue1_throughput_over_time.png",
+    dpi=300,
+    bbox_inches="tight"
+)
+
+plt.show()

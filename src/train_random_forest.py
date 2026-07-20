@@ -3,9 +3,8 @@ import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
-import os
 import matplotlib.pyplot as plt
-from matplotlib.ticker import StrMethodFormatter
+
 
 # Load training, validation, and testing data
 X_train = pd.read_csv("data/X_train_ue1.csv")
@@ -33,9 +32,9 @@ X_test = X_test[selected_features]
 
 # Best Random Forest model found during hyperparameter tuning
 best_params = {
-    "n_estimators": 100,
+    "n_estimators": 200,
     "max_depth": 10,
-    "min_samples_leaf": 4,
+    "min_samples_leaf": 2,
 }
 
 
@@ -84,8 +83,8 @@ print(f"Test R²   : {test_r2:.4f}")
 
 # Show first 10 test predictions
 results = pd.DataFrame({
-    "Actual Throughput": y_test,
-    "Predicted Throughput": test_predictions
+    "Actual Total UE1 Throughput": y_test,
+    "Predicted Total UE1 Throughput": test_predictions
 })
 
 print("\nFirst 10 Test Predictions")
@@ -106,18 +105,16 @@ print(importance)
 # The hyperparameter tuning code used to find the best model has been
 # removed. The selected model was:
 #
-# n_estimators = 100
+# n_estimators = 200
 # max_depth = 10
-# min_samples_leaf = 4
+# min_samples_leaf = 2
 #
 # This configuration achieved the lowest validation RMSE during tuning
 # and is used for all final evaluations reported in the paper.
 # -------------------------------------------------------------------
 
 
-
-
-
+# Paper-style font
 plt.rcParams["font.family"] = "DejaVu Serif"
 
 importance_plot = importance.copy()
@@ -131,7 +128,10 @@ importance_plot["Feature"] = importance_plot["Feature"].replace({
 })
 
 # Sort so the most important feature appears at the top
-importance_plot = importance_plot.sort_values("Importance", ascending=True)
+importance_plot = importance_plot.sort_values(
+    "Importance",
+    ascending=True
+)
 
 fig, ax = plt.subplots(figsize=(6.8, 3.8))
 

@@ -1,3 +1,4 @@
+
 import pandas as pd
 
 from sklearn.ensemble import RandomForestRegressor
@@ -148,6 +149,9 @@ print("\n========== Summary For This Part ==========")
 summary = pd.DataFrame(all_results)
 summary = summary.sort_values("Validation RMSE")
 
+# FIX: Convert dictionary objects to strings so pandas can cleanly output to string
+summary["Parameters"] = summary["Parameters"].astype(str)
+
 print(summary.to_string(index=False))
 
 
@@ -171,3 +175,4 @@ print(f"Test MAE  : {test_mae:.2f}")
 print(f"Test MSE  : {test_mse:.2f}")
 print(f"Test RMSE : {test_rmse:.2f}")
 print(f"Test R²   : {test_r2:.4f}")
+

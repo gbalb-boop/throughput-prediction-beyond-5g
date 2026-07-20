@@ -2,11 +2,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.ticker import StrMethodFormatter
 
-
 from pathlib import Path
 from sklearn.preprocessing import MinMaxScaler
 
-# Testing the new dataset from GitHub:
+# Dataset from GitHub:
 # https://github.com/teo-tsou/app_aware_5g/tree/master/dataset
 
 DATA_PATH = Path("data")
@@ -20,16 +19,31 @@ print("File:", file_path)
 print("Shape:", df.shape)
 
 # """
-# UE1 throughput prediction setup
-# Creates lag features, performs train/test split,
+# UE1 total throughput prediction setup
+# Creates total UE1 throughput, lag features,
+# performs chronological train/validation/test split,
 # normalizes the input features, and saves the data.
 # """
 
-TARGET_COLUMN = "UE1: web-rtc"
+# Create total UE1 throughput by summing throughput
+# from all three applications for each row
+df["UE1_total_throughput"] = (
+    df["UE1: web-rtc"]
+    + df["UE1: sipp"]
+    + df["UE1: web-server"]
+)
 
-ue1_df = df[["UE1: web-rtc", "UE1-Jitter", "UE1-CQI"]].copy()
+TARGET_COLUMN = "UE1_total_throughput"
 
-# Creates the lag features
+ue1_df = df[
+    [
+        TARGET_COLUMN,
+        "UE1-Jitter",
+        "UE1-CQI",
+    ]
+].copy()
+
+# Create lag features from total UE1 throughput
 ue1_df["UE1_throughput_lag1"] = ue1_df[TARGET_COLUMN].shift(1)
 ue1_df["UE1_throughput_lag2"] = ue1_df[TARGET_COLUMN].shift(2)
 ue1_df["UE1_throughput_lag3"] = ue1_df[TARGET_COLUMN].shift(3)
@@ -37,7 +51,7 @@ ue1_df["UE1_throughput_lag3"] = ue1_df[TARGET_COLUMN].shift(3)
 # Remove rows that contain NaN from the lag features
 ue1_df = ue1_df.dropna()
 
-# features inputs
+# Feature inputs
 features = ue1_df[
     [
         "UE1_throughput_lag1",
@@ -48,13 +62,14 @@ features = ue1_df[
     ]
 ]
 
-# Target outputs
+# Target output
 target = ue1_df[TARGET_COLUMN]
 
 # Chronological 70/15/15 split
 n = len(ue1_df)
 train_end = int(n * 0.70)
 val_end = int(n * 0.85)
+
 X_train = features.iloc[:train_end].copy()
 X_val = features.iloc[train_end:val_end].copy()
 X_test = features.iloc[val_end:].copy()
@@ -73,8 +88,11 @@ print("Testing target:", y_test.shape)
 
 # """
 # Normalize FEATURES ONLY
+# Fit the scaler only on the training data
 # """
+
 scaler = MinMaxScaler()
+
 X_train = pd.DataFrame(
     scaler.fit_transform(X_train),
     columns=X_train.columns,
@@ -108,22 +126,21 @@ y_val.to_csv("data/y_val_ue1.csv", index=False)
 y_test.to_csv("data/y_test_ue1.csv", index=False)
 
 print("\nProcessed dataset saved successfully.")
-print("Lag features: lag1, lag2, lag3")
+print("Target: Total UE1 Throughput")
+print("Total throughput = WebRTC + SIPp + Web Server")
+print("Lag features: lag1, lag2, lag3 of total UE1 throughput")
 print("Normalization: MinMaxScaler")
 print("Train/Validation/Test Split: 70/15/15")
-
-
 
 
 # # Use DejaVu throughout the figure
 # plt.rcParams["font.family"] = "DejaVu Serif"
 
-# fig, ax = plt.subplots(figsize=(6.8, 3.8))  # Fits well in a research paper
+# fig, ax = plt.subplots(figsize=(6.8, 3.8))
 
 # ax.plot(
 #     df.index[:1000],
 #     df[TARGET_COLUMN].iloc[:1000],
-#     color="tab:blue",
 #     linewidth=0.8
 # )
 
@@ -135,22 +152,22 @@ print("Train/Validation/Test Split: 70/15/15")
 # )
 
 # ax.set_ylabel(
-#     "Throughput (Bytes/s)",
+#     "Total UE1 Throughput (Bytes/s)",
 #     fontsize=11
 # )
 
-# ax.tick_params(axis='both', labelsize=10)
+# ax.tick_params(axis="both", labelsize=10)
 
 # # Add commas to y-axis labels
-# ax.yaxis.set_major_formatter(StrMethodFormatter('{x:,.0f}'))
+# ax.yaxis.set_major_formatter(StrMethodFormatter("{x:,.0f}"))
 
 # # Light grid
-# ax.grid(True, linestyle='--', linewidth=0.5, alpha=0.4)
+# ax.grid(True, linestyle="--", linewidth=0.5, alpha=0.4)
 
 # plt.tight_layout()
 
 # plt.savefig(
-#     "plots/figure1_ue1_throughput.png",
+#     "plots/figure1_ue1_total_throughput.png",
 #     dpi=600,
 #     bbox_inches="tight"
 # )

@@ -1,9 +1,6 @@
 import pandas as pd
-
-#for the graph
 import matplotlib.pyplot as plt
 from matplotlib.ticker import StrMethodFormatter
-import os
 
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error
@@ -22,6 +19,7 @@ y_test = pd.read_csv("data/y_test_ue1.csv").squeeze()
 
 
 # Select input features
+# Lag features are based on total UE1 throughput
 selected_features = [
     "UE1_throughput_lag1",
     "UE1_throughput_lag2",
@@ -35,12 +33,12 @@ X_val = X_val[selected_features]
 X_test = X_test[selected_features]
 
 
-#Create and train Linear Regression model
+# Create and train Linear Regression model
 model = LinearRegression()
 model.fit(X_train, y_train)
 
 
-#Evaluate on validation set
+# Evaluate on validation set
 val_predictions = model.predict(X_val)
 
 val_mae = mean_absolute_error(y_val, val_predictions)
@@ -72,16 +70,17 @@ print(f"Test R²   : {test_r2:.4f}")
 
 # Show first 10 test predictions
 results = pd.DataFrame({
-    "Actual Throughput": y_test,
-    "Predicted Throughput": test_predictions
+    "Actual Total UE1 Throughput": y_test,
+    "Predicted Total UE1 Throughput": test_predictions
 })
 
 print("\nFirst 10 Test Predictions")
 print(results.head(10))
 
-# note to self even though its testing on the validation
-# set its not realy doing anything because it doesnt
-# have any real parameters to fine tune it  
+
+# Linear Regression has no major hyperparameters to tune,
+# so the validation set is used only to report intermediate
+# performance before the final test-set evaluation.
 
 
 # Paper-style font
@@ -93,18 +92,18 @@ num_samples = 200
 # Create figure
 fig, ax = plt.subplots(figsize=(6.8, 3.8))
 
-# Actual throughput
+# Actual total UE1 throughput
 ax.plot(
     results.index[:num_samples],
-    results["Actual Throughput"].iloc[:num_samples],
+    results["Actual Total UE1 Throughput"].iloc[:num_samples],
     label="Actual Throughput",
     linewidth=1.2
 )
 
-# Predicted throughput
+# Predicted total UE1 throughput
 ax.plot(
     results.index[:num_samples],
-    results["Predicted Throughput"].iloc[:num_samples],
+    results["Predicted Total UE1 Throughput"].iloc[:num_samples],
     label="Predicted Throughput",
     linewidth=0.9,
     linestyle="--"
@@ -112,7 +111,7 @@ ax.plot(
 
 # Axis labels
 ax.set_xlabel("Sample Index", fontsize=11)
-ax.set_ylabel("Throughput (Bytes/s)", fontsize=11)
+ax.set_ylabel("Total UE1 Throughput (Bytes/s)", fontsize=11)
 
 # Tick formatting
 ax.tick_params(axis="both", labelsize=10)

@@ -132,44 +132,82 @@ print("Lag features: lag1, lag2, lag3 of total UE1 throughput")
 print("Normalization: MinMaxScaler")
 print("Train/Validation/Test Split: 70/15/15")
 
+# """
+# Figure 1: Total UE1 Throughput Over Sample Index
+# """
 
-# # Use DejaVu throughout the figure
-# plt.rcParams["font.family"] = "DejaVu Serif"
+# Create the plots directory if it does not already exist
+PLOTS_PATH = Path("plots")
+PLOTS_PATH.mkdir(parents=True, exist_ok=True)
 
-# fig, ax = plt.subplots(figsize=(6.8, 3.8))
+# Number of samples to display
+NUM_SAMPLES = 1000
 
-# ax.plot(
-#     df.index[:1000],
-#     df[TARGET_COLUMN].iloc[:1000],
-#     linewidth=0.8
-# )
+# Select the first 1,000 total-throughput values
+throughput_plot = df[TARGET_COLUMN].iloc[:NUM_SAMPLES].reset_index(drop=True)
 
-# # No title (the caption serves as the title in research papers)
+# Create a clean sample index from 0 to 999
+sample_index = range(len(throughput_plot))
 
-# ax.set_xlabel(
-#     "Sample Index",
-#     fontsize=11
-# )
+# Use a readable serif font throughout the figure
+plt.rcParams["font.family"] = "DejaVu Serif"
 
-# ax.set_ylabel(
-#     "Total UE1 Throughput (Bytes/s)",
-#     fontsize=11
-# )
+fig, ax = plt.subplots(figsize=(7.2, 4.0))
 
-# ax.tick_params(axis="both", labelsize=10)
+ax.plot(
+    sample_index,
+    throughput_plot,
+    linewidth=0.9,
+)
 
-# # Add commas to y-axis labels
-# ax.yaxis.set_major_formatter(StrMethodFormatter("{x:,.0f}"))
+# Research-paper figures normally use the caption instead of a title
+ax.set_xlabel(
+    "Sample Index",
+    fontsize=11,
+)
 
-# # Light grid
-# ax.grid(True, linestyle="--", linewidth=0.5, alpha=0.4)
+ax.set_ylabel(
+    "Total UE1 Throughput (Bytes/s)",
+    fontsize=11,
+)
 
-# plt.tight_layout()
+# Set readable tick-label sizes
+ax.tick_params(
+    axis="both",
+    labelsize=10,
+)
 
-# plt.savefig(
-#     "plots/figure1_ue1_total_throughput.png",
-#     dpi=600,
-#     bbox_inches="tight"
-# )
+# Format throughput values with commas
+ax.yaxis.set_major_formatter(
+    StrMethodFormatter("{x:,.0f}")
+)
 
-# plt.show()
+# Keep the horizontal axis aligned with the displayed samples
+ax.set_xlim(
+    0,
+    len(throughput_plot) - 1,
+)
+
+# Add a light grid without distracting from the data
+ax.grid(
+    True,
+    linestyle="--",
+    linewidth=0.5,
+    alpha=0.4,
+)
+
+plt.tight_layout()
+
+figure_path = PLOTS_PATH / "figure1_ue1_total_throughput.png"
+
+plt.savefig(
+    figure_path,
+    dpi=600,
+    bbox_inches="tight",
+)
+
+plt.show()
+plt.close(fig)
+
+print("\nFigure 1 saved successfully.")
+print("File:", figure_path)

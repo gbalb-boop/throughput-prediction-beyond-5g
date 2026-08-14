@@ -35,7 +35,9 @@ model = XGBRegressor(
 model.fit(X_train, y_train)
 
 
-# Evaluate on validation set
+# =========================
+# Validation Evaluation
+# =========================
 val_predictions = model.predict(X_val)
 
 val_mae = mean_absolute_error(y_val, val_predictions)
@@ -57,7 +59,9 @@ print(f"Validation RMSE : {val_rmse:.2f}")
 print(f"Validation R²   : {val_r2:.4f}")
 
 
-# Final evaluation on test set
+# =========================
+# Final Test Evaluation
+# =========================
 test_predictions = model.predict(X_test)
 
 test_mae = mean_absolute_error(y_test, test_predictions)
@@ -72,11 +76,17 @@ print(f"Test RMSE : {test_rmse:.2f}")
 print(f"Test R²   : {test_r2:.4f}")
 
 
-# Feature importance
+# =========================
+# Feature Importance
+# =========================
 importance = model.feature_importances_
 
 plt.figure(figsize=(8, 5))
-plt.bar(X_train.columns, importance)
+
+plt.bar(
+    X_train.columns,
+    importance
+)
 
 plt.title("XGBoost Feature Importance")
 plt.xlabel("Features")
@@ -94,30 +104,41 @@ plt.savefig(
 plt.close()
 
 
-# Actual vs predicted throughput
+# =========================
+# Actual vs Predicted Plot
+# First 200 Test Samples
+# =========================
+NUM_SAMPLES = 200
+
 plt.figure(figsize=(12, 6))
 
 plt.plot(
-    y_test.values[:300],
+    y_test.values[:NUM_SAMPLES],
     label="Actual Total UE1 Throughput"
 )
 
 plt.plot(
-    test_predictions[:300],
+    test_predictions[:NUM_SAMPLES],
     label="Predicted Total UE1 Throughput"
 )
 
 plt.title("Actual vs Predicted Total UE1 Throughput")
 plt.xlabel("Sample Index")
-plt.ylabel("Total UE1 Throughput")
+plt.ylabel("Total UE1 Throughput (Bytes/s)")
 
 plt.legend()
 plt.tight_layout()
 
 plt.savefig(
-    "plots/xgboost_actual_vs_predicted.png",
+    "plots/xgboost_actual_vs_predicted_200.png",
     dpi=600,
     bbox_inches="tight"
 )
 
 plt.close()
+
+
+print("\nXGBoost evaluation completed successfully.")
+print("Saved plots:")
+print("plots/xgboost_feature_importance.png")
+print("plots/xgboost_actual_vs_predicted_200.png")

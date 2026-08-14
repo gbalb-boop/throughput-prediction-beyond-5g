@@ -23,9 +23,7 @@ Thumbs.db
 *.log
 
 # Saved model artifacts
-*.joblib
 *.pkl
-*.keras
 *.h5
 
 # Generated processed datasets

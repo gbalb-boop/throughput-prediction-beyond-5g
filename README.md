@@ -217,7 +217,7 @@ wireless_congestion_prediction/
 Clone the repository:
 
 ```bash
-git clone https://github.com/YOUR-USERNAME/wireless_congestion_prediction.git
+git clone https://github.com/gbal-boop/wireless_congestion_prediction.git
 cd wireless_congestion_prediction
 ```
 

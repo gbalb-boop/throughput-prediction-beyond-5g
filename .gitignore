@@ -27,3 +27,14 @@ Thumbs.db
 *.pkl
 *.keras
 *.h5
+
+# Generated processed datasets
+data/X_train_ue1.csv
+data/X_val_ue1.csv
+data/X_test_ue1.csv
+data/y_train_ue1.csv
+data/y_val_ue1.csv
+data/y_test_ue1.csv
+
+# Original external dataset
+data/ue-lte-network-traffic-stats.csv
